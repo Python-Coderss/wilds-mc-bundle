@@ -179,9 +179,12 @@ write_env() {
     return 0
   fi
   cat >"$ENV_FILE" <<'ENVEOF'
-# Wilds. Edit, then: sudo bash /opt/wilds/install.sh restart
+# Server settings. Edit, then: sudo bash /opt/wilds/install.sh restart
 DATA_DIR=/data
 CONTROL_PORT=7860
+
+# Player-facing name: the server-list MOTD, the /start page and the dashboard.
+SERVER_NAME=Trust Republic SMP
 
 # 8 GiB machine: leaves ~2 GiB for Python, playit and the page cache.
 MC_MEMORY=5G

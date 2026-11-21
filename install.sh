@@ -210,6 +210,9 @@ MC_VERSION=26.3
 MC_PROTOCOL=777
 
 # Public connectivity: playit dials out, so no inbound port is needed.
+# Java: "Minecraft Java" tunnel -> 127.0.0.1:25565.
+# Bedrock/Education: "Minecraft Bedrock (NetherNet)" tunnel; paste its Geyser
+# settings into plugins/Geyser-Spigot/config.yml. There is no UDP port to open.
 PLAYIT_SECRET=
 MC_PUBLIC_ADDRESS=
 BEDROCK_PUBLIC_ADDRESS=
@@ -309,15 +312,27 @@ do_ports() {
   cat <<PORTS
 What has to be reachable, and how:
 
-  25565/tcp  Java (wake proxy)        playit preset "Minecraft Java" -> 127.0.0.1:25565
-  19132/udp  Bedrock + Education      playit presets "Bedrock RakNet" and
-                                      "Bedrock NetherNet" -> 127.0.0.1:19132
-  7860/tcp   /start page and the API  instabox port publish $machine 7860
+  25565/tcp  Java (wake proxy)
+      playit tunnel type "Minecraft Java", local 127.0.0.1:25565 — free tier.
+      It proxies TCP, so it reaches the wake proxy and Paper can sleep behind it.
+
+  Bedrock + Education — no inbound port at all
+      playit tunnel type "Minecraft Bedrock (NetherNet)" — free, experimental.
+      This is NOT a UDP forward: open the tunnel, Configuration help -> Geyser
+      tab -> Copy, then paste those keys into
+        $DATA/server/plugins/Geyser-Spigot/config.yml
+      under bedrock:, keeping port 19132 and address 0.0.0.0. Geyser dials out
+      itself; the console then prints
+        Registered with the external signaling service
+      Managed keys (port, clone-remote-port, motd1, server-name, remote.*) are
+      rewritten on boot; the pasted playit keys are left alone.
+
+  7860/tcp   /start page and the API
+      instabox port publish $machine 7860      (free; HTTP only)
 
 Why the game ports are not published on the host: InstaBox published ports
-serve HTTP(S). Raw TCP (--tcp) is paid and TLS-wrapped, which a Minecraft
-client cannot speak, and UDP is not offered. playit's free tier covers exactly
-the three presets above, so the tunnel carries the game protocol only.
+serve HTTP(S). Raw TCP (--tcp) is paid and TLS-wrapped, which a Minecraft client
+cannot speak, and UDP is not offered.
 PORTS
 }
 

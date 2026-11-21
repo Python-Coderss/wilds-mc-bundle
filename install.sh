@@ -300,16 +300,35 @@ do_install() {
   restart ......... sudo bash $ROOT/install.sh restart
   log ............. tail -f $LOG
   dashboard ....... instabox port publish <machine> 7860
+  ports ........... sudo bash $ROOT/install.sh ports   (what to publish where)
 DONE
+}
+
+do_ports() {
+  local machine="${INSTABOX_MACHINE:-<machine>}"
+  cat <<PORTS
+What has to be reachable, and how:
+
+  25565/tcp  Java (wake proxy)        playit preset "Minecraft Java" -> 127.0.0.1:25565
+  19132/udp  Bedrock + Education      playit presets "Bedrock RakNet" and
+                                      "Bedrock NetherNet" -> 127.0.0.1:19132
+  7860/tcp   /start page and the API  instabox port publish $machine 7860
+
+Why the game ports are not published on the host: InstaBox published ports
+serve HTTP(S). Raw TCP (--tcp) is paid and TLS-wrapped, which a Minecraft
+client cannot speak, and UDP is not offered. playit's free tier covers exactly
+the three presets above, so the tunnel carries the game protocol only.
+PORTS
 }
 
 # ------------------------------------------------------------------ entry
 case "${1:-}" in
-  "") die "usage: sudo bash install.sh <bundle.zip> | restart | stop | status" ;;
+  "") die "usage: sudo bash install.sh <bundle.zip> | restart | stop | status | ports" ;;
   start) need_root; do_start ;;
   stop) need_root; do_stop ;;
   restart) need_root; do_restart ;;
   status) do_status ;;
+  ports) do_ports ;;
   install) do_install "${2:-}" ;;
   *) do_install "$1" ;;
 esac

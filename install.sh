@@ -188,9 +188,10 @@ MC_MEMORY=5G
 MC_MIN_MEMORY=2G
 MAX_PLAYERS=20
 
-# The machine only exists inside the window, so an idle JVM saves nothing. The
-# run cap closes the world before InstaBox pauses the machine.
-AUTO_SLEEP=false
+# Players start the world: the wake proxy answers on 25565 and boots Paper on the
+# first join attempt (~40s). The run cap closes the world before InstaBox pauses
+# the VM. Set AUTO_SLEEP=false to keep Paper up for the whole window instead.
+AUTO_SLEEP=true
 IDLE_SLEEP_MINUTES=10
 WAKE_ON_BOOT=true
 RUN_CAP_MINUTES=470

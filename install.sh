@@ -324,6 +324,10 @@ What has to be reachable, and how:
       under bedrock:, keeping port 19132 and address 0.0.0.0. Geyser dials out
       itself; the console then prints
         Registered with the external signaling service
+      NetherNet joins in two stages: TCP 19132 for signaling, then UDP 19132 for
+      the WebRTC media. A UDP-only forward (the plain "Minecraft Bedrock"
+      preset) therefore cannot carry it, even though the port number matches.
+      The NetherNet tunnel type proxies both stages.
       Managed keys (port, clone-remote-port, motd1, server-name, remote.*) are
       rewritten on boot; the pasted playit keys are left alone.
 
